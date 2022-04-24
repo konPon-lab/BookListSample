@@ -1,4 +1,4 @@
-import 'package:booklistsample/book_list_page.dart';
+import 'package:booklistsample/book_list/book_list_page.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 
