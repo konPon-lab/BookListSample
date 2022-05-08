@@ -7,7 +7,6 @@ import 'package:flutter_slidable/flutter_slidable.dart';
 import 'package:provider/provider.dart';
 
 class BookListPage extends StatelessWidget {
-
   final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>();
 
   @override
@@ -31,23 +30,23 @@ class BookListPage extends StatelessWidget {
                 .map(
                   (book) => Slidable(
                     endActionPane: ActionPane(
-                      motion: const ScrollMotion(),
+                      motion: ScrollMotion(),
                       children: [
                         SlidableAction(
-                          onPressed: (BuildContext context) async {
+                          onPressed: (value) async {
                             final String? title = await Navigator.push(
                               context,
                               MaterialPageRoute(
                                 builder: (context) => EditBookPage(book),
                               ),
                             );
-                            // if (title != null) {
-                            //   final snackBar = SnackBar(
-                            //       backgroundColor: Colors.green,
-                            //       content: Text("$titleを更新しました"));
-                            //   ScaffoldMessenger.of(context)
-                            //       .showSnackBar(snackBar);
-                            // }
+                            if (title != null) {
+                              final snackBar = SnackBar(
+                                  backgroundColor: Colors.green,
+                                  content: Text("$titleを更新しました"));
+                              ScaffoldMessenger.of(context)
+                                  .showSnackBar(snackBar);
+                            }
 
                             model.fechBookList();
                           },
@@ -56,12 +55,14 @@ class BookListPage extends StatelessWidget {
                           icon: Icons.edit,
                           label: 'edit',
                         ),
-                        const SlidableAction(
-                          onPressed: null,
+                        SlidableAction(
                           backgroundColor: Colors.red,
                           foregroundColor: Colors.white,
                           icon: Icons.delete,
                           label: 'delete',
+                          onPressed: (value) async {
+                            await showConfirmDialog(context, book, model);
+                          },
                         ),
                       ],
                     ),
@@ -101,6 +102,39 @@ class BookListPage extends StatelessWidget {
           );
         }),
       ),
+    );
+  }
+
+  Future showConfirmDialog(
+      BuildContext context, Book book, BookListModel model) {
+    return showDialog(
+      context: context,
+      builder: (_) {
+        return AlertDialog(
+          title: Text("削除の確認"),
+          content: Text("【${book.title}】を削除しますか？"),
+          actions: [
+            // ボタン領域
+            TextButton(
+              child: Text("Cancel"),
+              onPressed: () => Navigator.pop(context),
+            ),
+            TextButton(
+              child: Text("OK"),
+              onPressed: () async {
+                await model.delete(book);
+                Navigator.pop(context);
+                final snackBar = SnackBar(
+                  backgroundColor: Colors.red,
+                  content: Text("${book.title}を削除しました"),
+                );
+                model.fechBookList();
+                ScaffoldMessenger.of(context).showSnackBar(snackBar);
+              },
+            ),
+          ],
+        );
+      },
     );
   }
 }
