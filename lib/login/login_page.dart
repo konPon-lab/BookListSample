@@ -45,6 +45,7 @@ class LoginBookPage extends StatelessWidget {
                           // TODO: ここで取得したtextを使う
                           model.setPassword(text);
                         },
+                        obscureText: true,
                       ),
                       const SizedBox(
                         height: 16,

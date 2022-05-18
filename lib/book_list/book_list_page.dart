@@ -3,6 +3,8 @@ import 'package:booklistsample/book_list/book_list_model.dart';
 import 'package:booklistsample/domain/book.dart';
 import 'package:booklistsample/edit_book/edit_book_page.dart';
 import 'package:booklistsample/login/login_page.dart';
+import 'package:booklistsample/mypage/my_page.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_slidable/flutter_slidable.dart';
 import 'package:provider/provider.dart';
@@ -21,13 +23,25 @@ class BookListPage extends StatelessWidget {
           actions: [
             IconButton(
               onPressed: () async {
-                await Navigator.push(
-                  context,
-                  MaterialPageRoute(
-                    builder: (context) => LoginBookPage(),
-                    fullscreenDialog: true,
-                  ),
-                );
+                if (FirebaseAuth.instance.currentUser != null) {
+                  print("login");
+                  await Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (context) => MyPage(),
+                      fullscreenDialog: true,
+                    ),
+                  );
+                } else {
+                  print("not login");
+                  await Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (context) => LoginBookPage(),
+                      fullscreenDialog: true,
+                    ),
+                  );
+                }
               },
               icon: Icon(Icons.person),
             ),
